@@ -51,6 +51,21 @@ model User {
   hashedPassword    String?
   role              UserRole            @default(BUYER)
 
+  // Email verification
+  isActive                    Boolean   @default(false)
+  emailVerificationToken      String?   @unique
+  emailVerificationExpires    DateTime?
+
+  // Password reset
+  passwordResetToken          String?   @unique
+  passwordResetExpires        DateTime?
+
+  // Security
+  loginAttempts               Int       @default(0)
+  lockedUntil                 DateTime?
+  lastLoginAt                 DateTime?
+  lastLoginIp                 String?
+
   // Stripe Connect for sellers
   stripeAccountId   String?             @unique
   stripeOnboarded   Boolean             @default(false)
@@ -69,6 +84,8 @@ model User {
 
   @@index([email])
   @@index([stripeAccountId])
+  @@index([emailVerificationToken])
+  @@index([passwordResetToken])
 }
 
 model Account {
